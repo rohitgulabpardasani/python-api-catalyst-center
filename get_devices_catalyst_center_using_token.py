@@ -1,12 +1,12 @@
 # ---------------------------------------------
-# Cisco DNAC API Reference Guide:
+# Cisco Catalyst Center API Reference Guide:
 # https://developer.cisco.com/docs/dna-center/2-3-5/cisco-dna-center-2-3-5-api-overview/
 # ---------------------------------------------
 
 
 import requests
 
-# Cisco DNA Center API details
+# Cisco Catalyst Center API details
 BASE_URL = "https://sandboxdnac.cisco.com"
 
 # Use your provided token directly
@@ -16,8 +16,8 @@ TOKEN = "PASTE_TOKEN_HERE"  # Replace with your actual token
 requests.packages.urllib3.disable_warnings()
 
 def get_devices():
-    """Fetch network devices from Cisco DNA Center API."""
-    url = f"{BASE_URL}/PASTE_ENDPOINT_URL_HERE"  # Replace with the correct endpoint
+    """Fetch network devices from Cisco Catalyst Center API."""
+    url = f"{BASE_URL}/PASTE_RESOURCE_URL_HERE"  # Replace with the correct URL
     headers = {
         "X-Auth-Token": TOKEN,
         "Content-Type": "application/json"
