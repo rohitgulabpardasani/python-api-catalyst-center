@@ -1,47 +1,55 @@
+# ---------------------------------------------
+# Cisco DNAC API Reference Guide:
+# https://developer.cisco.com/docs/dna-center/2-3-5/cisco-dna-center-2-3-5-api-overview/
+# ---------------------------------------------
+
+
 import requests
 
 # Cisco DNA Center API details
 BASE_URL = "https://sandboxdnac.cisco.com"
-USERNAME = "devnetuser"
-PASSWORD = "Cisco123!"
 
-# Disable SSL warnings (only for sandbox/demo purposes)
+# Use your provided token directly
+TOKEN = "PASTE_TOKEN_HERE"  # Replace with your actual token
+
+# Disable SSL warnings
 requests.packages.urllib3.disable_warnings()
 
-def get_auth_token():
-    """Step-by-step: Obtain authentication token from Cisco DNA Center API."""
-    
-    print("🔐 Step 1: Preparing to contact the Cisco DNA Center authentication API...")
-    auth_url = f"{BASE_URL}/dna/system/api/v1/auth/token"
-    print(f"➡️  Auth URL: {auth_url}")
+def get_devices():
+    """Fetch network devices from Cisco DNA Center API."""
+    url = f"{BASE_URL}/PASTE_ENDPOINT_URL_HERE"  # Replace with the correct endpoint
+    headers = {
+        "X-Auth-Token": TOKEN,
+        "Content-Type": "application/json"
+    }
 
-    print("\n🧾 Step 2: Sending POST request with basic authentication...")
-    print(f"➡️  Username: {USERNAME}")
-    print("➡️  Password: [hidden for security]")
+    response = requests.get(url, headers=headers, verify=False)
 
-    try:
-        response = requests.post(auth_url, auth=(USERNAME, PASSWORD), verify=False)
+    if response.status_code == 200:
+        devices = response.json().get("response", [])
 
-        print("\n📬 Step 3: Waiting for response from the server...")
-        print(f"➡️  Status Code: {response.status_code}")
+        if not devices:
+            print("❌ No devices found.")
+            return
 
-        if response.status_code == 200:
-            print("✅ Step 4: Authentication successful!")
-            token = response.json()["Token"]
-            print(f"🔑 Authentication Token:\n{token}")
-            return token
-        else:
-            print("❌ Step 4: Authentication failed!")
-            print(f"➡️  Status Code: {response.status_code}")
-            print(f"➡️  Response Body: {response.text}")
-            return None
+        for device in devices:
+            # Ensure we handle missing fields safely
+            device_id = device.get("id", "N/A")
+            hostname = device.get("hostname", "Unknown")
+            ip_address = device.get("managementIpAddress", "Unknown")
 
-    except requests.exceptions.RequestException as e:
-        print("🚨 An error occurred while communicating with the API:")
-        print(str(e))
-        return None
+            # Extract device type (alternative fields used if "type" is missing)
+            device_type = device.get("type") or device.get("family") or device.get("platformId") or "Unknown"
 
-# Execute the function to get the token
-if __name__ == "__main__":
-    get_auth_token()
+            print(f"📌 Device ID: {device_id}")
+            print(f"🔹 Hostname: {hostname}")
+            print(f"🌐 IP Address: {ip_address}")
+            print(f"🔧 Device Type: {device_type}")  # Correctly fetches the type
+            print("-" * 50)  # Separator for readability
+
+    else:
+        print(f"❌ Failed to retrieve devices: {response.status_code} - {response.text}")
+
+# Run the function
+get_devices()
 
